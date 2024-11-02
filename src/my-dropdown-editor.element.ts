@@ -19,6 +19,9 @@ export class MyDropdownEditorElement extends UmbLitElement implements UmbPropert
     @state()
     private _options: Array<Option> = [];
 
+    @state()
+    private _isMultiple = false;
+
     connectedCallback() {
         super.connectedCallback();
         console.log('Connected - Initial value:', this.value);
@@ -32,27 +35,29 @@ export class MyDropdownEditorElement extends UmbLitElement implements UmbPropert
 
     public set config(config: UmbPropertyEditorConfigCollection | undefined) {
         console.log('Config setter - Current value:', this.value);
+        
         if (!this.value) {
             console.log('No value, setting to empty array');
             this.value = [];
         }
         
         if (!config) return;
-    
+
         const items = config.getValueByAlias('items');
-        const defaultIndex = parseInt(config.getValueByAlias('defaultValue') as string) || 0;
-    
+        const defaultValue = config.getValueByAlias('defaultValue') as string;
+        this._isMultiple = config.getValueByAlias('multiple') === '1';
+
         if (Array.isArray(items) && items.length > 0) {
             this._options = items.map((item) => ({
                 name: item,
                 value: item,
                 selected: this.value.includes(item)
             }));
-    
-            // Only set default if we don't have a value
-            if ((!this.value || this.value.length === 0) && items[defaultIndex]) {
-                console.log('Setting default value:', [items[defaultIndex]]);
-                this.setValue([items[defaultIndex]]);
+
+            // Only set default if we don't have a value and defaultValue exists in items
+            if ((!this.value || this.value.length === 0) && defaultValue && items.includes(defaultValue)) {
+                console.log('Setting default value:', [defaultValue]);
+                this.setValue([defaultValue]);
             }
         }
     }
@@ -65,17 +70,30 @@ export class MyDropdownEditorElement extends UmbLitElement implements UmbPropert
     }
 
     #onChange(event: UUISelectEvent) {
-        const newValue = event.target.value as string;
-        this.value = [newValue];
+        const newValue = event.target.value;
+        
+        if (this._isMultiple) {
+            // Handle multiple selection
+            this.value = Array.isArray(newValue) ? newValue as Array<string> : [newValue as string];
+        } else {
+            // Handle single selection
+            this.value = [newValue as string];
+        }
+        
         this.#updateOptionsSelection();
         this.dispatchEvent(new UmbPropertyValueChangeEvent());
     }
 
     render() {
+        const currentValue = this._isMultiple 
+            ? (Array.isArray(this.value) ? this.value : [])
+            : (Array.isArray(this.value) ? this.value[0] : '');
+
         return html`
             <uui-select 
                 .options=${this._options} 
-                .value=${this.value[0] || ''}
+                .value=${currentValue}
+                ?multiple=${this._isMultiple}
                 @change=${this.#onChange}>
             </uui-select>`;
     }
