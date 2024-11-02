@@ -1,0 +1,36 @@
+{
+    "$schema": "../../umbraco-package-schema.json",
+    "name": "My.CustomDropdown",
+    "version": "0.1.0",
+    "extensions": [
+        {
+            "type": "propertyEditorUi",
+            "alias": "My.PropertyEditorUi.Dropdown",
+            "name": "My Custom Dropdown Editor",
+            "element": "/App_Plugins/Client/client.js",
+            "elementName": "my-dropdown-editor",
+            "meta": {
+                "label": "Custom Dropdown",
+                "icon": "icon-list",
+                "group": "common",
+                "propertyEditorSchemaAlias": "Umbraco.DropDown.Flexible",
+                "settings": {
+                    "properties": [
+                        {
+                            "alias": "defaultValue",
+                            "label": "Default Value",
+                            "description": "Select a default value",
+                            "propertyEditorUiAlias": "Umb.PropertyEditorUi.TextBox"
+                        }
+                    ],
+                    "defaultData": [
+                        {
+                            "alias": "defaultValue",
+                            "value": ""
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+} 

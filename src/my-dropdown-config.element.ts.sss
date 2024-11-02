@@ -1,0 +1,43 @@
+import { customElement, html, LitElement, property } from "@umbraco-cms/backoffice/external/lit";
+
+@customElement('my-dropdown-config')
+export class MyDropdownConfigElement extends LitElement {
+    
+    @property({ attribute: false })
+    config?: any;
+
+    render() {
+        return html`
+            <div class="flex flex-column gap-2">
+                <umb-property-editor-ui-key-value-pairs
+                    label="Options"
+                    .value=${this.config?.items ?? []}
+                    @change=${(event: CustomEvent) => {
+                        this.#updateConfig('items', event.detail);
+                    }}
+                ></umb-property-editor-ui-key-value-pairs>
+
+                <uui-toggle
+                    label="Enable multiple choice"
+                    .checked=${this.config?.multiple ?? false}
+                    @change=${(event: Event) => {
+                        this.#updateConfig('multiple', (event.target as HTMLInputElement).checked);
+                    }}
+                ></uui-toggle>
+
+                <uui-input
+                    label="Default Value"
+                    .value=${this.config?.defaultValue ?? ''}
+                    @change=${(event: Event) => {
+                        this.#updateConfig('defaultValue', (event.target as HTMLInputElement).value);
+                    }}
+                ></uui-input>
+            </div>
+        `;
+    }
+
+    #updateConfig(key: string, value: any) {
+        const newConfig = { ...this.config, [key]: value };
+        this.dispatchEvent(new CustomEvent('change', { detail: newConfig }));
+    }
+} 
