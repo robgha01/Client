@@ -13,40 +13,71 @@ interface Option {
 
 @customElement('my-dropdown-editor')
 export class MyDropdownEditorElement extends UmbLitElement implements UmbPropertyEditorUiElement {
-    @property({ type: String })
-    public value?: string = '';
+    @property({ type: Array })
+    public value: Array<string> = [];
 
     @state()
     private _options: Array<Option> = [];
 
-    public set config(config: UmbPropertyEditorConfigCollection | undefined) {
-        if (!config) return;
+    connectedCallback() {
+        super.connectedCallback();
+        console.log('Connected - Initial value:', this.value);
+    }
 
+    public setValue(value: Array<string>): void {
+        console.log('setValue called with:', value);
+        this.value = value;
+        this.#updateOptionsSelection();
+    }
+
+    public set config(config: UmbPropertyEditorConfigCollection | undefined) {
+        console.log('Config setter - Current value:', this.value);
+        if (!this.value) {
+            console.log('No value, setting to empty array');
+            this.value = [];
+        }
+        
+        if (!config) return;
+    
         const items = config.getValueByAlias('items');
         const defaultIndex = parseInt(config.getValueByAlias('defaultValue') as string) || 0;
-        const val = this.value;
-        console.log('val', val);
-        
-
+    
         if (Array.isArray(items) && items.length > 0) {
-            // If no value is set, use the default index
-            const effectiveValue = this.value || items[defaultIndex];
-            
             this._options = items.map((item) => ({
                 name: item,
                 value: item,
-                selected: item === effectiveValue
+                selected: this.value.includes(item)
             }));
+    
+            // Only set default if we don't have a value
+            if ((!this.value || this.value.length === 0) && items[defaultIndex]) {
+                console.log('Setting default value:', [items[defaultIndex]]);
+                this.setValue([items[defaultIndex]]);
+            }
         }
     }
 
+    #updateOptionsSelection() {
+        this._options = this._options.map(option => ({
+            ...option,
+            selected: this.value.includes(option.value)
+        }));
+    }
+
     #onChange(event: UUISelectEvent) {
-        this.value = event.target.value as string;
+        const newValue = event.target.value as string;
+        this.value = [newValue];
+        this.#updateOptionsSelection();
         this.dispatchEvent(new UmbPropertyValueChangeEvent());
     }
 
     render() {
-        return html`<uui-select .options=${this._options} @change=${this.#onChange}></uui-select>`;
+        return html`
+            <uui-select 
+                .options=${this._options} 
+                .value=${this.value[0] || ''}
+                @change=${this.#onChange}>
+            </uui-select>`;
     }
 }
 
