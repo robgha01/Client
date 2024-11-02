@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@umbraco-ui/uui": "^1.11.0",
     "lit": "^3.2.1"
   },
   "devDependencies": {

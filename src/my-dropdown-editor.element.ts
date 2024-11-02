@@ -13,8 +13,8 @@ interface Option {
 
 @customElement('my-dropdown-editor')
 export class MyDropdownEditorElement extends UmbLitElement implements UmbPropertyEditorUiElement {
-    @property()
-    value?: string = '';
+    @property({ type: String })
+    public value?: string = '';
 
     @state()
     private _options: Array<Option> = [];
@@ -24,6 +24,9 @@ export class MyDropdownEditorElement extends UmbLitElement implements UmbPropert
 
         const items = config.getValueByAlias('items');
         const defaultIndex = parseInt(config.getValueByAlias('defaultValue') as string) || 0;
+        const val = this.value;
+        console.log('val', val);
+        
 
         if (Array.isArray(items) && items.length > 0) {
             // If no value is set, use the default index
@@ -43,12 +46,7 @@ export class MyDropdownEditorElement extends UmbLitElement implements UmbPropert
     }
 
     render() {
-        return html`
-            <uui-select 
-                .options=${this._options} 
-                @change=${this.#onChange}>
-            </uui-select>
-        `;
+        return html`<uui-select .options=${this._options} @change=${this.#onChange}></uui-select>`;
     }
 }
 
