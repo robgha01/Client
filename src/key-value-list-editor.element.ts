@@ -128,8 +128,8 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
 
     render() {
         return html`
-            <div class="flex flex-col gap-2">
-                <div class="items-container sorter-container">
+            <div class="flex flex-col">
+                <div class="items-container">
                     ${repeat(
                         this._items,
                         (item) => KeyValueListEditorElement.generateUniqueId(item),
@@ -137,7 +137,7 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
                             const itemId = KeyValueListEditorElement.generateUniqueId(item);
                             return html`
                                 <div 
-                                    class="item-container flex gap-2 items-center mb-2"
+                                    class="item-container"
                                     id="${itemId}"
                                     data-item-id="${itemId}"
                                     ?disabled=${this.readonly}>
@@ -183,7 +183,7 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
                     )}
                 </div>
 
-                <div>
+                <div class="add-item-container">
                     <uui-button
                         label="Add item"
                         look="primary"
@@ -197,29 +197,98 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
 
     static styles = [
         css`
+            :host {
+                display: block;
+                padding: var(--uui-size-space-2);
+            }
+
+            .items-container {
+                display: flex;
+                flex-direction: column;
+                gap: var(--uui-size-space-3);
+                margin-bottom: var(--uui-size-space-4);
+            }
+
             .item-container {
                 cursor: default;
                 background: var(--uui-color-surface);
                 border: 1px solid var(--uui-color-border);
                 border-radius: var(--uui-border-radius);
-                padding: var(--uui-size-space-2);
+                padding: var(--uui-size-space-4);
+                display: grid;
+                grid-template-columns: auto 1fr 1fr 120px auto;
+                gap: var(--uui-size-space-3);
+                align-items: center;
+                transition: all 120ms ease-in-out;
+            }
+
+            .item-container:hover {
+                border-color: var(--uui-color-border-emphasis);
+                box-shadow: var(--uui-shadow-depth-1);
+            }
+
+            .item-container[disabled] {
+                opacity: 0.7;
+                pointer-events: none;
             }
 
             .drag-handle {
                 cursor: move;
+                color: var(--uui-color-text-alt);
+                transition: color 120ms ease;
+            }
+
+            .drag-handle:hover {
+                color: var(--uui-color-text);
+            }
+
+            uui-input {
+                min-width: 200px;
             }
 
             /* Draggable styles */
             .draggable-mirror {
                 background: var(--uui-color-surface);
-                border: 1px solid var(--uui-color-border);
+                border: 1px solid var(--uui-color-border-emphasis);
                 border-radius: var(--uui-border-radius);
-                padding: var(--uui-size-space-2);
-                opacity: 0.8;
+                padding: var(--uui-size-space-4);
+                box-shadow: var(--uui-shadow-depth-3);
+                opacity: 0.9;
             }
 
             .draggable-source--is-dragging {
-                opacity: 0.4;
+                opacity: 0.3;
+                border: 1px dashed var(--uui-color-border);
+            }
+
+            /* Add item button container */
+            .add-item-container {
+                margin-top: var(--uui-size-space-2);
+            }
+
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .item-container {
+                    grid-template-columns: auto 1fr auto;
+                    gap: var(--uui-size-space-2);
+                }
+
+                uui-input {
+                    min-width: 150px;
+                    grid-column: 2 / -1;
+                }
+
+                .item-container uui-button:not(.drag-handle) {
+                    grid-column: 2 / -1;
+                    width: auto;
+                }
+            }
+
+            /* Add fixed width to default button */
+            uui-button[label="Set as default"] {
+                width: 120px;
+                text-align: center;
+                justify-content: center;
             }
         `,
     ];
