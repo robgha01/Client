@@ -3,15 +3,18 @@ import { defineConfig } from "vite";
 export default defineConfig({
     build: {
         lib: {
-            entry: "src/my-dropdown-editor.element.ts", // your web component source file
+            entry: {
+                client: "src/my-dropdown-editor.element.ts",
+                keyvaluelist: "src/key-value-list-editor.element.ts"
+            },
             formats: ["es"],
         },
-        outDir: "../../wwwroot/App_Plugins/Client", // Updated path
+        outDir: "../../wwwroot/App_Plugins/Client",
         emptyOutDir: true,
         sourcemap: true,
         rollupOptions: {
-            external: [/^@umbraco/], // ignore the Umbraco Backoffice package in the build
+            external: [/^@umbraco/],
         },
     },
-    base: "/App_Plugins/Client/", // the base path of the app in the browser (used for assets)
+    base: "/App_Plugins/Client/",
 });
