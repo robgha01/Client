@@ -5,6 +5,12 @@ import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
 import type { UUISelectEvent } from '@umbraco-cms/backoffice/external/uui';
 
+interface KeyValueItem {
+    key: string;
+    value: string;
+    isDefault?: boolean;
+}
+
 interface Option {
     name: string;
     value: string;
@@ -22,44 +28,38 @@ export class MyDropdownEditorElement extends UmbLitElement implements UmbPropert
     @state()
     private _isMultiple = false;
 
-    connectedCallback() {
-        super.connectedCallback();
-        console.log('Connected - Initial value:', this.value);
+    public set config(config: UmbPropertyEditorConfigCollection | undefined) {
+        console.log('Config setter - Current value:', this.value);
+        
+        if (!this.value) {
+            this.value = [];
+        }
+        
+        if (!config) return;
+
+        const testValue = config.getValueByAlias('testValue') as Array<KeyValueItem>;
+        this._isMultiple = config.getValueByAlias('multiple') ?? false;
+
+        if (Array.isArray(testValue) && testValue.length > 0) {
+            this._options = testValue.map((item) => ({
+                name: item.key,
+                value: item.value,
+                selected: this.value.includes(item.value)
+            }));
+
+            // Set default value if one is marked as default
+            const defaultItem = testValue.find(item => item.isDefault);
+            if ((!this.value || this.value.length === 0) && defaultItem) {
+                console.log('Setting default value:', [defaultItem.value]);
+                this.setValue([defaultItem.value]);
+            }
+        }
     }
 
     public setValue(value: Array<string>): void {
         console.log('setValue called with:', value);
         this.value = value;
         this.#updateOptionsSelection();
-    }
-
-    public set config(config: UmbPropertyEditorConfigCollection | undefined) {
-        console.log('Config setter - Current value:', this.value);
-        
-        if (!this.value) {
-            console.log('No value, setting to empty array');
-            this.value = [];
-        }
-        
-        if (!config) return;
-
-        const items = config.getValueByAlias('items');
-        const defaultValue = config.getValueByAlias('defaultValue') as string;
-        this._isMultiple = config.getValueByAlias('multiple') === '1';
-
-        if (Array.isArray(items) && items.length > 0) {
-            this._options = items.map((item) => ({
-                name: item,
-                value: item,
-                selected: this.value.includes(item)
-            }));
-
-            // Only set default if we don't have a value and defaultValue exists in items
-            if ((!this.value || this.value.length === 0) && defaultValue && items.includes(defaultValue)) {
-                console.log('Setting default value:', [defaultValue]);
-                this.setValue([defaultValue]);
-            }
-        }
     }
 
     #updateOptionsSelection() {
@@ -73,10 +73,8 @@ export class MyDropdownEditorElement extends UmbLitElement implements UmbPropert
         const newValue = event.target.value;
         
         if (this._isMultiple) {
-            // Handle multiple selection
             this.value = Array.isArray(newValue) ? newValue as Array<string> : [newValue as string];
         } else {
-            // Handle single selection
             this.value = [newValue as string];
         }
         
