@@ -222,11 +222,6 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
                 transition: all 120ms ease-in-out;
             }
 
-            .item-container:hover {
-                border-color: var(--uui-color-border-emphasis);
-                box-shadow: var(--uui-shadow-depth-1);
-            }
-
             .item-container[disabled] {
                 opacity: 0.7;
                 pointer-events: none;
@@ -235,11 +230,21 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
             .drag-handle {
                 cursor: move;
                 color: var(--uui-color-text-alt);
-                transition: color 120ms ease;
+                transition: all 120ms ease;
+                border: 1px solid var(--uui-color-border);
+                border-radius: var(--uui-border-radius);
+                padding: var(--uui-size-space-2);
+                height: 40px;
+                width: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .drag-handle:hover {
                 color: var(--uui-color-text);
+                background: var(--uui-color-surface-emphasis);
+                border-color: var(--uui-color-border-emphasis);
             }
 
             uui-input {
@@ -284,11 +289,71 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
                 }
             }
 
-            /* Add fixed width to default button */
+            /* Enhanced button styles */
+            .drag-handle {
+                cursor: move;
+                color: var(--uui-color-text-alt);
+                transition: all 120ms ease;
+                border: 1px solid var(--uui-color-border);
+                border-radius: var(--uui-border-radius);
+                padding: var(--uui-size-space-2);
+                height: 40px;
+                width: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .drag-handle:hover {
+                color: var(--uui-color-text);
+                background: var(--uui-color-surface-emphasis);
+                border-color: var(--uui-color-border-emphasis);
+            }
+
+            /* Default button styles */
             uui-button[label="Set as default"] {
                 width: 120px;
+                height: 40px;
                 text-align: center;
                 justify-content: center;
+                border: 1px solid var(--uui-color-border);
+                border-radius: var(--uui-border-radius);
+                transition: all 120ms ease;
+                color: var(--uui-color-text);
+            }
+
+            uui-button[label="Set as default"]:hover {
+                background: var(--uui-color-surface-emphasis);
+                border-color: var(--uui-color-border-emphasis);
+            }
+
+            /* Remove button styles */
+            uui-button[label="Remove"] {
+                height: 40px;
+                width: 40px;
+                border: 1px solid var(--uui-color-danger-emphasis);
+                border-radius: var(--uui-border-radius);
+                transition: all 120ms ease;
+            }
+
+            uui-button[label="Remove"]:hover {
+                background: var(--uui-color-danger-emphasis);
+                color: var(--uui-color-surface);
+            }
+
+            /* Add item button styles */
+            .add-item-container uui-button {
+                border: 1px solid var(--uui-color-primary);
+                border-radius: var(--uui-border-radius);
+                transition: all 120ms ease;
+                height: 40px;
+                padding: 0 var(--uui-size-space-4);
+            }
+
+            .add-item-container uui-button:hover {
+                background: var(--uui-color-primary-emphasis);
+                border-color: var(--uui-color-primary-emphasis);
+                color: var(--uui-color-surface);
             }
         `,
     ];
