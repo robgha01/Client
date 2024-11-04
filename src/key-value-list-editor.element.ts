@@ -152,7 +152,7 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
                                         label="Key"
                                         .value=${item.key}
                                         placeholder="Enter key"
-                                        @input=${(e: UUIInputEvent) => 
+                                        @change=${(e: UUIInputEvent) => 
                                             this.#updateItem(index, 'key', e.target.value as string)}>
                                     </uui-input>
                                     
@@ -160,12 +160,13 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
                                         label="Value"
                                         .value=${item.value}
                                         placeholder="Enter value"
-                                        @input=${(e: UUIInputEvent) => 
+                                        @change=${(e: UUIInputEvent) => 
                                             this.#updateItem(index, 'value', e.target.value as string)}>
                                     </uui-input>
 
                                     <uui-button
                                         label="Set as default"
+                                        look=${item.isDefault ? 'primary' : 'default'}
                                         color=${item.isDefault ? 'positive' : 'default'}
                                         @click=${() => this.#setDefault(index)}>
                                         ${item.isDefault ? 'Default' : 'Set Default'}
@@ -212,9 +213,8 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
             .item-container {
                 cursor: default;
                 background: var(--uui-color-surface);
-                border: 1px solid var(--uui-color-border);
                 border-radius: var(--uui-border-radius);
-                padding: var(--uui-size-space-4);
+                padding: var(--uui-size-space-1);
                 display: grid;
                 grid-template-columns: auto 1fr 1fr 120px auto;
                 gap: var(--uui-size-space-3);
@@ -231,10 +231,6 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
                 cursor: move;
                 color: var(--uui-color-text-alt);
                 transition: all 120ms ease;
-                border: 1px solid var(--uui-color-border);
-                border-radius: var(--uui-border-radius);
-                padding: var(--uui-size-space-2);
-                height: 40px;
                 width: 40px;
                 display: flex;
                 align-items: center;
@@ -289,65 +285,40 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
                 }
             }
 
-            /* Enhanced button styles */
+            /* Common button styles - matching input height */
+            .items-container uui-button {
+                height: var(--uui-button-height);
+                border: 1px solid var(--uui-color-border);
+                border-radius: var(--uui-border-radius);
+                transition: all 120ms ease;
+            }
+
+            /* Drag handle */
             .drag-handle {
                 cursor: move;
                 color: var(--uui-color-text-alt);
-                transition: all 120ms ease;
-                border: 1px solid var(--uui-color-border);
-                border-radius: var(--uui-border-radius);
-                padding: var(--uui-size-space-2);
-                height: 40px;
-                width: 40px;
+                width: var(--uui-button-height);
                 display: flex;
                 align-items: center;
                 justify-content: center;
             }
 
-            .drag-handle:hover {
-                color: var(--uui-color-text);
-                background: var(--uui-color-surface-emphasis);
-                border-color: var(--uui-color-border-emphasis);
-            }
-
-            /* Default button styles */
+            /* Default button */
             uui-button[label="Set as default"] {
                 width: 120px;
-                height: 40px;
                 text-align: center;
                 justify-content: center;
-                border: 1px solid var(--uui-color-border);
-                border-radius: var(--uui-border-radius);
-                transition: all 120ms ease;
-                color: var(--uui-color-text);
             }
 
-            uui-button[label="Set as default"]:hover {
-                background: var(--uui-color-surface-emphasis);
-                border-color: var(--uui-color-border-emphasis);
-            }
-
-            /* Remove button styles */
+            /* Remove button */
             uui-button[label="Remove"] {
-                height: 40px;
-                width: 40px;
-                border: 1px solid var(--uui-color-danger-emphasis);
-                border-radius: var(--uui-border-radius);
-                transition: all 120ms ease;
+                width: var(--uui-button-height);
             }
 
-            uui-button[label="Remove"]:hover {
-                background: var(--uui-color-danger-emphasis);
-                color: var(--uui-color-surface);
-            }
-
-            /* Add item button styles */
+            /* Add item button */
             .add-item-container uui-button {
-                border: 1px solid var(--uui-color-primary);
-                border-radius: var(--uui-border-radius);
-                transition: all 120ms ease;
-                height: 40px;
-                padding: 0 var(--uui-size-space-4);
+                border-color: var(--uui-color-primary);
+                /* padding: 0 var(--uui-size-space-4); */
             }
 
             .add-item-container uui-button:hover {

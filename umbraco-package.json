@@ -13,7 +13,7 @@
                 "label": "Key Value List",
                 "icon": "icon-list",
                 "group": "common",
-                "propertyEditorSchemaAlias": "Umbraco.JsonValue"
+                "propertyEditorSchemaAlias": "Umbraco.Plain.Json"
             }
         },
         {
@@ -26,26 +26,26 @@
                 "label": "Custom Dropdown",
                 "icon": "icon-list",
                 "group": "common",
-                "propertyEditorSchemaAlias": "Umbraco.DropDown.Flexible",
+                "propertyEditorSchemaAlias": "Umbraco.Plain.Json",
                 "settings": {
                     "properties": [
                         {
-                            "alias": "defaultValue",
-                            "label": "Default Value",
-                            "description": "Select a default value",
-                            "propertyEditorUiAlias": "Umb.PropertyEditorUi.TextBox"
+                            "alias": "multiple",
+                            "label": "Enable multiple choice",
+                            "description": "Allow users to select multiple items",
+                            "propertyEditorUiAlias": "Umb.PropertyEditorUi.Toggle"
                         },
                         {
-                            "alias": "testValue",
-                            "label": "Test Value",
-                            "description": "Select a test value",
+                            "alias": "items",
+                            "label": "Items",
+                            "description": "Configure the dropdown items",
                             "propertyEditorUiAlias": "My.PropertyEditorUi.KeyValueList"
                         }
                     ],
                     "defaultData": [
                         {
-                            "alias": "defaultValue",
-                            "value": ""
+                            "alias": "multiple",
+                            "value": false
                         }
                     ]
                 }

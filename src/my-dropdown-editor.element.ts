@@ -41,18 +41,18 @@ export class MyDropdownEditorElement extends UmbLitElement implements UmbPropert
         
         if (!config) return;
 
-        const testValue = config.getValueByAlias('testValue') as Array<KeyValueItem>;
+        const items = config.getValueByAlias('items') as Array<KeyValueItem>;
         this._isMultiple = config.getValueByAlias('multiple') ?? false;
 
-        if (Array.isArray(testValue) && testValue.length > 0) {
-            this._options = testValue.map((item) => ({
+        if (Array.isArray(items) && items.length > 0) {
+            this._options = items.map((item) => ({
                 name: item.key,
                 value: item.value,
                 selected: this.value.includes(item.value)
             }));
 
             // Set default value if one is marked as default
-            const defaultItem = testValue.find(item => item.isDefault);
+            const defaultItem = items.find(item => item.isDefault);
             if ((!this.value || this.value.length === 0) && defaultItem) {
                 console.log('Setting default value:', [defaultItem.value]);
                 this.setValue([defaultItem.value]);
