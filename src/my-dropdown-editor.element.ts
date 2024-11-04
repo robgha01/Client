@@ -1,9 +1,10 @@
-import { customElement, html, property, state } from '@umbraco-cms/backoffice/external/lit';
+import { customElement, html, property, state, css } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbPropertyValueChangeEvent } from '@umbraco-cms/backoffice/property-editor';
 import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
 import type { UUISelectEvent } from '@umbraco-cms/backoffice/external/uui';
+import { map } from '@umbraco-cms/backoffice/external/lit';
 
 interface KeyValueItem {
     key: string;
@@ -21,6 +22,9 @@ interface Option {
 export class MyDropdownEditorElement extends UmbLitElement implements UmbPropertyEditorUiElement {
     @property({ type: Array })
     public value: Array<string> = [];
+
+    @property({ type: Boolean })
+    public readonly = false;
 
     @state()
     private _options: Array<Option> = [];
@@ -82,19 +86,53 @@ export class MyDropdownEditorElement extends UmbLitElement implements UmbPropert
         this.dispatchEvent(new UmbPropertyValueChangeEvent());
     }
 
+    #onChangeMulitple(event: Event) {
+        const select = event.target as HTMLSelectElement;
+        const selectedOptions = Array.from(select.selectedOptions).map(option => option.value);
+        this.value = selectedOptions;
+        this.#updateOptionsSelection();
+        this.dispatchEvent(new UmbPropertyValueChangeEvent());
+    }
+
     render() {
-        const currentValue = this._isMultiple 
-            ? (Array.isArray(this.value) ? this.value : [])
-            : (Array.isArray(this.value) ? this.value[0] : '');
+        if (this._isMultiple) {
+            return this.#renderDropdownMultiple();
+        }
+
+        const currentValue = Array.isArray(this.value) ? this.value[0] : '';
 
         return html`
             <uui-select 
                 .options=${this._options} 
                 .value=${currentValue}
-                ?multiple=${this._isMultiple}
+                ?disabled=${this.readonly}
                 @change=${this.#onChange}>
             </uui-select>`;
     }
+
+    #renderDropdownMultiple() {
+        if (this.readonly) {
+            return html`<div>${this.value?.join(', ')}</div>`;
+        }
+
+        return html`
+            <select id="native" multiple @change=${this.#onChangeMulitple}>
+                ${map(
+                    this._options,
+                    (item) => html`<option value=${item.value} ?selected=${item.selected}>${item.name}</option>`,
+                )}
+            </select>
+        `;
+    }
+
+    static styles = [
+        css`
+            select {
+                width: 100%;
+                min-height: 120px;
+            }
+        `,
+    ];
 }
 
 declare global {
