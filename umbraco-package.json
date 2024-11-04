@@ -34,6 +34,12 @@
                             "label": "Default Value",
                             "description": "Select a default value",
                             "propertyEditorUiAlias": "Umb.PropertyEditorUi.TextBox"
+                        },
+                        {
+                            "alias": "testValue",
+                            "label": "Test Value",
+                            "description": "Select a test value",
+                            "propertyEditorUiAlias": "My.PropertyEditorUi.KeyValueList"
                         }
                     ],
                     "defaultData": [
