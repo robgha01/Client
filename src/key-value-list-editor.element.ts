@@ -51,6 +51,18 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
         }
     };
 
+    override createRenderRoot() {
+        const root = this.attachShadow({ 
+            mode: 'open',
+            delegatesFocus: true 
+        });
+        // Ensure styles are adopted
+        const sheet = new CSSStyleSheet();
+        sheet.replaceSync(KeyValueListEditorElement.styles[0].cssText);
+        root.adoptedStyleSheets = [sheet];
+        return root;
+    }
+
     // Initialize sorter with config
     #sorter = new UmbSorterController<KeyValueItem, HTMLElement>(this, {
         ...KeyValueListEditorElement.SORTER_CONFIG,
