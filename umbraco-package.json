@@ -26,7 +26,7 @@
                 "label": "Custom Dropdown",
                 "icon": "icon-list",
                 "group": "common",
-                "propertyEditorSchemaAlias": "Umbraco.Plain.Json",
+                "propertyEditorSchemaAlias": "My.PropertyEditorUi.Dropdown",
                 "settings": {
                     "properties": [
                         {

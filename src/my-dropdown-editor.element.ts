@@ -56,6 +56,7 @@ export class MyDropdownEditorElement extends UmbLitElement implements UmbPropert
             if ((!this.value || this.value.length === 0) && defaultItem) {
                 console.log('Setting default value:', [defaultItem.value]);
                 this.setValue([defaultItem.value]);
+                this.dispatchEvent(new UmbPropertyValueChangeEvent());
             }
         }
     }

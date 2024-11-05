@@ -20,6 +20,10 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
     @state()
     private _items: Array<KeyValueItem> = [];
 
+    // Add a property to track the index of the item to focus
+    @state()
+    private _focusIndex: number | null = null;
+
     private static generateUniqueId(item: KeyValueItem): string {
         // Remove spaces and special characters, convert to lowercase
         const key = item.key.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -96,6 +100,7 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
         ];
         this._items = newItems;
         this.#sorter.setModel(newItems);
+        this._focusIndex = this._items.length - 1; // Set focus to the new item
         this.dispatchChange();
     }
 
@@ -116,7 +121,7 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
     #setDefault(index: number) {
         this._items = this._items.map((item, i) => ({
             ...item,
-            isDefault: i === index
+            isDefault: i === index ? (item.isDefault ? false : true) : false
         }));
         this.dispatchChange();
     }
@@ -124,6 +129,13 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
     private dispatchChange() {
         this.value = this._items;
         this.dispatchEvent(new UmbPropertyValueChangeEvent());
+    }
+
+    #handleFocus(index: number) {
+        if (this._focusIndex === index) {
+            // Reset focus index after focusing
+            this._focusIndex = null;
+        }
     }
 
     render() {
@@ -153,7 +165,9 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
                                         .value=${item.key}
                                         placeholder="Enter key"
                                         @change=${(e: UUIInputEvent) => 
-                                            this.#updateItem(index, 'key', e.target.value as string)}>
+                                            this.#updateItem(index, 'key', e.target.value as string)}
+                                        ${this._focusIndex === index ? 'autofocus' : ''}
+                                        @focus=${() => this.#handleFocus(index)}>
                                     </uui-input>
                                     
                                     <uui-input
@@ -194,6 +208,26 @@ export class KeyValueListEditorElement extends UmbLitElement implements UmbPrope
                 </div>
             </div>
         `;
+    }
+
+    updated(changedProperties: Map<string, unknown>) {
+        super.updated(changedProperties);
+
+        if (this._focusIndex !== null) {
+            // Use requestAnimationFrame to ensure DOM is ready
+            requestAnimationFrame(() => {
+                const container = this.shadowRoot?.querySelector('.items-container');
+                const inputs = container?.querySelectorAll('uui-input');
+                if (inputs && this._focusIndex !== null) {
+                    const input = inputs[this._focusIndex * 2]; // *2 because we have 2 inputs per item
+                    if (input) {
+                        (input as HTMLElement).focus();
+                        // Scroll the new item into view
+                        input.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }
+            });
+        }
     }
 
     static styles = [
