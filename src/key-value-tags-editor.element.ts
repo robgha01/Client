@@ -107,68 +107,80 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
                                 id="${itemId}"
                                 data-item-id="${itemId}"
                                 ?disabled=${this.readonly}>
-                                <div class="key-value-tags__item-header">
-                                    <uui-button 
-                                        class="drag-handle"
-                                        label="Drag to reorder"
-                                        tabindex="-1"
-                                        style="min-height: 40px; min-width: 40px;"
-                                        compact>
-                                        <uui-icon name="icon-navigation"></uui-icon>
-                                    </uui-button>
+                                <div class="key-value-tags__item-content">
+                                    <div class="key-value-tags__item-left">
+                                        <uui-button 
+                                            class="drag-handle"
+                                            label="Drag to reorder"
+                                            tabindex="-1"
+                                            style="min-height: 40px; min-width: 40px;"
+                                            compact>
+                                            <uui-icon name="icon-navigation"></uui-icon>
+                                        </uui-button>
 
-                                    <div class="key-value-tags__item-inputs">
-                                        <uui-input
-                                            .value=${item.title}
-                                            placeholder="Enter title"
-                                            ?readonly=${this.readonly}
-                                            @change=${(e: Event) => this.#onTitleChange(index, e)}
-                                            style="min-height: 40px; padding: var(--uui-tag-padding, var(--uui-size-space-1, 3px) calc(var(--uui-size-space-1, 3px) + 0.5em)); padding-left: 0;">
-                                        </uui-input>
+                                        <div class="key-value-tags__item-inputs">
+                                            <uui-input
+                                                .value=${item.title}
+                                                placeholder="Enter title"
+                                                ?readonly=${this.readonly}
+                                                @change=${(e: Event) => this.#onTitleChange(index, e)}
+                                                style="min-height: 40px; padding: var(--uui-tag-padding, var(--uui-size-space-1, 3px) calc(var(--uui-size-space-1, 3px) + 0.5em)); padding-left: 0;">
+                                            </uui-input>
 
-                                        <uui-input
-                                            .value=${item.key}
-                                            placeholder="Enter key"
-                                            ?readonly=${this.readonly}
-                                            @change=${(e: Event) => this.#onKeyChange(index, e)}
-                                            style="min-height: 40px; padding: var(--uui-tag-padding, var(--uui-size-space-1, 3px) calc(var(--uui-size-space-1, 3px) + 0.5em)); padding-left: 0;">
-                                        </uui-input>
+                                            <uui-input
+                                                .value=${item.key}
+                                                placeholder="Enter key"
+                                                ?readonly=${this.readonly}
+                                                @change=${(e: Event) => this.#onKeyChange(index, e)}
+                                                style="min-height: 40px; padding: var(--uui-tag-padding, var(--uui-size-space-1, 3px) calc(var(--uui-size-space-1, 3px) + 0.5em)); padding-left: 0;">
+                                            </uui-input>
+                                        </div>
                                     </div>
 
-                                    ${!this.readonly ? html`
-                                        <uui-button
-                                            compact
-                                            look="secondary"
-                                            color="danger"
-                                            label="Remove"
-                                            @click=${() => this.#onRemove(index)}
-                                            style="min-height: 40px; min-width: 55.0278px;">
-                                            <uui-icon name="icon-trash"></uui-icon>
-                                        </uui-button>
-                                    ` : ''}
+                                    <div class="key-value-tags__item-right">
+                                        ${!this.readonly ? html`
+                                            <uui-button
+                                                compact
+                                                look="secondary"
+                                                color="danger"
+                                                label="Remove"
+                                                @click=${() => this.#onRemove(index)}
+                                                style="min-height: 40px; min-width: 55.0278px;">
+                                                <uui-icon name="icon-trash"></uui-icon>
+                                            </uui-button>
+                                        ` : ''}
+                                    </div>
                                 </div>
-                                
-                                <umb-tags-input
-                                    .value=${item.tags.join(',')}
-                                    .items=${item.tags}
-                                    .config=${this.config}
-                                    ?readonly=${this.readonly}
-                                    @change=${(e: CustomEvent) => this.#onTagsChange(index, e)}>
-                                </umb-tags-input>
+
+                                <div class="key-value-tags__item-tags">
+                                    <umb-tags-input
+                                        .value=${item.tags.join(',')}
+                                        .items=${item.tags}
+                                        .config=${this.config}
+                                        ?readonly=${this.readonly}
+                                        @change=${(e: CustomEvent) => this.#onTagsChange(index, e)}>
+                                    </umb-tags-input>
+                                </div>
                             </div>
                         `;
                     }
                 )}
 
                 ${!this.readonly ? html`
-                    <div class="add-item-container">
-                        <uui-button
-                            look="primary"
-                            label="Add item"
-                            @click=${this.#onAdd}>
-                            <uui-icon name="add"></uui-icon>
-                            Add item
-                        </uui-button>
+                    <div class="key-value-tags__item">
+                        <div class="key-value-tags__item-tags">
+                            <div></div> <!-- Space for drag handle -->
+                            <div class="add-item-container">
+                                <uui-button
+                                    look="primary"
+                                    label="Add item"
+                                    @click=${this.#onAdd}>
+                                    <uui-icon name="add"></uui-icon>
+                                    Add item
+                                </uui-button>
+                            </div>
+                            <div></div> <!-- Space for remove button -->
+                        </div>
                     </div>
                 ` : ''}
             </div>
@@ -193,9 +205,15 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
                 padding-left: 0;
             }
 
-            .key-value-tags__item-header {
+            .key-value-tags__item-content {
                 display: grid;
                 grid-template-columns: 1fr auto;
+                gap: var(--uui-size-space-3);
+                align-items: start;
+            }
+
+            .key-value-tags__item-left {
+                display: flex;
                 gap: var(--uui-size-space-3);
                 align-items: center;
             }
@@ -203,7 +221,41 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
             .key-value-tags__item-inputs {
                 display: flex;
                 gap: var(--uui-size-space-3);
-                border-left: 2px solid var(--uui-color-border);
+                flex: 1;
+            }
+
+            .key-value-tags__item-inputs uui-input {
+                flex: 1;
+            }
+
+            /* Drag handle */
+            .drag-handle {
+                cursor: move;
+                color: var(--uui-color-text-alt);
+                min-width: 40px;
+                min-height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .drag-handle:hover {
+                color: var(--uui-color-text);
+                background: var(--uui-color-surface-emphasis);
+                border-color: var(--uui-color-border-emphasis);
+            }
+
+            /* Tags input container */
+            .key-value-tags__item-tags {
+                display: grid;
+                grid-template-columns: 40px 1fr 55.0278px; /* Exact button widths: drag handle (40px) + content + remove button (55.0278px) */
+                gap: var(--uui-size-space-3);
+            }
+
+            /* Tags input */
+            umb-tags-input {
+                width: 100%;
+                grid-column: 2;
             }
 
             /* Common button styles - matching input height */
@@ -220,6 +272,11 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
             }
 
             /* Add item button */
+            .add-item-container {
+                grid-column: 2;
+                width: 100%;
+            }
+
             .add-item-container uui-button {
                 border-color: var(--uui-color-primary);
             }
@@ -228,17 +285,6 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
                 background: var(--uui-color-primary-emphasis);
                 border-color: var(--uui-color-primary-emphasis);
                 color: var(--uui-color-surface);
-            }
-
-            /* Make inputs equal width */
-            .key-value-tags__item-inputs uui-input {
-                flex: 1;
-            }
-
-            /* Tags input full width */
-            umb-tags-input {
-                width: 100%;
-                border-left: 2px solid var(--uui-color-border);
             }
 
             /* Draggable styles */
@@ -254,22 +300,6 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
             .draggable-source--is-dragging {
                 opacity: 0.3;
                 border: 1px dashed var(--uui-color-border);
-            }
-
-            /* Drag handle */
-            .drag-handle {
-                cursor: move;
-                color: var(--uui-color-text-alt);
-                width: var(--uui-button-height);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .drag-handle:hover {
-                color: var(--uui-color-text);
-                background: var(--uui-color-surface-emphasis);
-                border-color: var(--uui-color-border-emphasis);
             }
 
             .key-value-tags__item-header {

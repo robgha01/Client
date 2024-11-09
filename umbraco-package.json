@@ -61,7 +61,7 @@
                 "label": "Key Value Tags",
                 "icon": "icon-tags",
                 "group": "common",
-                "propertyEditorSchemaAlias": "Umbraco.Plain.Json",
+                "propertyEditorSchemaAlias": "My.PropertyEditorUi.KeyValueTags",
                 "settings": {
                     "properties": [
                         {
