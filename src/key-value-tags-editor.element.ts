@@ -187,18 +187,18 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
 
             .key-value-tags__item {
                 display: grid;
-                grid-template-columns: 40px 1fr 55.0278px; /* Exact widths for consistent layout */
+                grid-template-columns: 40px 1fr 55.0278px;
                 gap: var(--uui-size-space-3);
                 background: var(--uui-color-surface);
                 border-radius: var(--uui-border-radius);
-                padding: var(--uui-size-space-3) 0; /* Remove left/right padding, keep top/bottom */
+                padding: var(--uui-size-space-3) 0;
             }
 
             .key-value-tags__item-content {
                 display: flex;
                 flex-direction: column;
                 gap: var(--uui-size-space-3);
-                grid-column: 2; /* Always in middle column */
+                grid-column: 2;
             }
 
             .key-value-tags__item-inputs {
@@ -219,16 +219,21 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
                 color: var(--uui-color-text-alt);
                 min-width: 40px;
                 min-height: 40px;
+                width: 40px;
+                height: 40px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                align-self: start;
             }
 
             /* Remove button - last column */
             uui-button[label="Remove"] {
                 grid-column: 3;
                 width: 55.0278px;
+                height: 40px;
                 min-height: 40px;
+                align-self: start;
             }
 
             /* Tags input */
