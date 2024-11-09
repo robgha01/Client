@@ -60,33 +60,37 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
             <div class="key-value-tags">
                 ${(this.value ?? []).map((item, index) => html`
                     <div class="key-value-tags__item">
-                        <uui-input
-                            .value=${item.key}
-                            placeholder="Enter key"
-                            ?readonly=${this.readonly}
-                            @change=${(e: Event) => this.#onKeyChange(index, e)}
-                            style="min-height: 40px; padding: var(--uui-tag-padding, var(--uui-size-space-1, 3px) calc(var(--uui-size-space-1, 3px) + 0.5em)); padding-left: 0;">
-                        </uui-input>
-                        
-                        <umb-tags-input
-                            .value=${item.tags.join(',')}
-                            .items=${item.tags}
-                            .config=${this.config}
-                            ?readonly=${this.readonly}
-                            @change=${(e: CustomEvent) => this.#onTagsChange(index, e)}>
-                        </umb-tags-input>
+                        <div class="key-value-tags__item-header">
+                            <uui-input
+                                .value=${item.key}
+                                placeholder="Enter key"
+                                ?readonly=${this.readonly}
+                                @change=${(e: Event) => this.#onKeyChange(index, e)}
+                                style="min-height: 40px; padding: var(--uui-tag-padding, var(--uui-size-space-1, 3px) calc(var(--uui-size-space-1, 3px) + 0.5em)); padding-left: 0;">
+                            </uui-input>
 
-                        ${!this.readonly ? html`
-                            <uui-button
-                                compact
-                                look="secondary"
-                                color="danger"
-                                label="Remove"
-                                @click=${() => this.#onRemove(index)}
-                                style="min-height: 40px;">
-                                <uui-icon name="icon-trash"></uui-icon>
-                            </uui-button>
-                        ` : ''}
+                            ${!this.readonly ? html`
+                                <uui-button
+                                    compact
+                                    look="secondary"
+                                    color="danger"
+                                    label="Remove"
+                                    @click=${() => this.#onRemove(index)}
+                                    style="min-height: 40px;">
+                                    <uui-icon name="icon-trash"></uui-icon>
+                                </uui-button>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="key-value-tags__item-content">
+                            <umb-tags-input
+                                .value=${item.tags.join(',')}
+                                .items=${item.tags}
+                                .config=${this.config}
+                                ?readonly=${this.readonly}
+                                @change=${(e: CustomEvent) => this.#onTagsChange(index, e)}>
+                            </umb-tags-input>
+                        </div>
                     </div>
                 `)}
 
@@ -114,10 +118,25 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
             }
 
             .key-value-tags__item {
+                background: var(--uui-color-surface);
+                border-radius: var(--uui-border-radius);
+                padding: var(--uui-size-space-3);
+                display: flex;
+                flex-direction: column;
+                gap: var(--uui-size-space-2);
+                padding-left: 0;
+            }
+
+            .key-value-tags__item-header {
                 display: grid;
-                grid-template-columns: 200px 1fr auto;
+                grid-template-columns: 1fr auto;
                 gap: var(--uui-size-space-3);
-                align-items: start;
+                align-items: center;
+            }
+
+            .key-value-tags__item-content {
+/*                 padding-left: var(--uui-size-space-3); */
+                border-left: 2px solid var(--uui-color-border);
             }
 
             /* Common button styles - matching input height */
@@ -146,19 +165,13 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
 
             /* Responsive adjustments */
             @media (max-width: 768px) {
-                .key-value-tags__item {
-                    grid-template-columns: auto 1fr auto;
+                .key-value-tags__item-header {
+                    grid-template-columns: 1fr auto;
                     gap: var(--uui-size-space-2);
                 }
 
-                uui-input {
-                    min-width: 150px;
-                    grid-column: 2 / -1;
-                }
-
-                .key-value-tags__item uui-button:not(.drag-handle) {
-                    grid-column: 2 / -1;
-                    width: auto;
+                .key-value-tags__item-content {
+                    padding-left: var(--uui-size-space-2);
                 }
             }
         `
