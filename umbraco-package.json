@@ -1,6 +1,6 @@
 {
     "$schema": "../../umbraco-package-schema.json",
-    "name": "My.CustomDropdown",
+    "name": "My.CustomEditors",
     "version": "0.1.0",
     "extensions": [
         {
@@ -46,6 +46,53 @@
                         {
                             "alias": "multiple",
                             "value": false
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "propertyEditorUi",
+            "alias": "My.PropertyEditorUi.KeyValueTags",
+            "name": "Key Value Tags",
+            "element": "/App_Plugins/Client/keyvaluetags.js",
+            "elementName": "key-value-tags-editor",
+            "meta": {
+                "label": "Key Value Tags",
+                "icon": "icon-tags",
+                "group": "common",
+                "propertyEditorSchemaAlias": "Umbraco.Plain.Json",
+                "settings": {
+                    "properties": [
+                        {
+                            "alias": "group",
+                            "label": "Group",
+                            "description": "Define a tag group",
+                            "propertyEditorUiAlias": "Umb.PropertyEditorUi.TextBox"
+                        },
+                        {
+                            "alias": "storageType",
+                            "label": "Storage type",
+                            "description": "The tag values can be stored as text or JSON",
+                            "propertyEditorUiAlias": "Umb.PropertyEditorUi.RadioButtonList",
+                            "config": {
+                                "items": [
+                                    {
+                                        "value": "text",
+                                        "label": "Text"
+                                    },
+                                    {
+                                        "value": "json",
+                                        "label": "JSON"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "defaultData": [
+                        {
+                            "alias": "storageType",
+                            "value": "text"
                         }
                     ]
                 }
