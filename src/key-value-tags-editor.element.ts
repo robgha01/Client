@@ -2,6 +2,7 @@ import { css, customElement, html, property } from '@umbraco-cms/backoffice/exte
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbPropertyValueChangeEvent } from '@umbraco-cms/backoffice/property-editor';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
+import type { UmbTagsInputElement } from '@umbraco-cms/backoffice/tags';
 import '@umbraco-cms/backoffice/tags';
 
 interface KeyValueTagItem {
@@ -44,8 +45,12 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
     }
 
     #onTagsChange(index: number, event: CustomEvent) {
+        const tags = ((event.target as UmbTagsInputElement).value as string)
+            .split(',')
+            .filter(tag => tag.trim() !== '');
+        
         this.value = (this.value ?? []).map((item, i) => 
-            i === index ? { ...item, tags: event.detail.value } : item
+            i === index ? { ...item, tags } : item
         );
         this.dispatchEvent(new UmbPropertyValueChangeEvent());
     }
@@ -59,15 +64,17 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
                             .value=${item.key}
                             placeholder="Enter key"
                             ?readonly=${this.readonly}
-                            @change=${(e: Event) => this.#onKeyChange(index, e)}>
+                            @change=${(e: Event) => this.#onKeyChange(index, e)}
+                            style="min-height: 40px; padding: var(--uui-tag-padding, var(--uui-size-space-1, 3px) calc(var(--uui-size-space-1, 3px) + 0.5em)); padding-left: 0;">
                         </uui-input>
                         
-                        <umb-property-editor-ui-tags
-                            .value=${item.tags}
+                        <umb-tags-input
+                            .value=${item.tags.join(',')}
+                            .items=${item.tags}
                             .config=${this.config}
                             ?readonly=${this.readonly}
                             @change=${(e: CustomEvent) => this.#onTagsChange(index, e)}>
-                        </umb-property-editor-ui-tags>
+                        </umb-tags-input>
 
                         ${!this.readonly ? html`
                             <uui-button
