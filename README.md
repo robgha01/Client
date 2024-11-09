@@ -1,4 +1,5 @@
 # Key Value Tags Editor for Umbraco 14
+
 ![image](https://github.com/user-attachments/assets/289862ba-00c2-4b08-b868-97f5d26ff6ee)
 
 A custom property editor for Umbraco 14 that allows editors to manage key-value pairs with associated tags. Each item consists of a title, key, and multiple tags, with drag-and-drop reordering capabilities.
@@ -19,7 +20,6 @@ A custom property editor for Umbraco 14 that allows editors to manage key-value 
 - `/src`: Contains the source code for the Key Value Tags Editor.
   - `/DataEditors`: Contains the data editor components.
     - `KeyValueTagsDataEditor.cs`: The main data editor class that registers the property editor with Umbraco.
-    - `KeyValueTagsConfiguration.cs`: Configuration model for the property editor.
   - `/ValueConverters`: Contains the value converters.
     - `KeyValueTagsValueConverter.cs`: Converts the stored JSON data to strongly typed objects.
     - `KeyValueTagItem.cs`: Model class representing each item in the editor.
@@ -27,8 +27,9 @@ A custom property editor for Umbraco 14 that allows editors to manage key-value 
   - `/KeyValueTags`: The property editor's front-end files.
     - `/src`: TypeScript source files.
       - `key-value-tags-editor.element.ts`: Main web component for the editor UI.
+      - `key-value-tags-input.element.ts`: Input component for the editor.
+      - `key-value-tags-list.element.ts`: List component for the editor.
     - `key-value-tags-editor.html`: HTML template file.
-    - `manifest.json`: Umbraco package manifest.
 
 ## Components
 
@@ -104,7 +105,7 @@ public class KeyValueTagItem
 
 ### Frontend Components
 
-#### Web Component
+#### Main Editor Component
 
 ```typescript
 @customElement('key-value-tags-editor')
@@ -117,6 +118,35 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
 
     @state()
     private _items: Array<KeyValueTagItem> = [];
+}
+```
+
+#### Input Component
+
+```typescript
+@customElement('key-value-tags-input')
+export class KeyValueTagsInputElement extends UmbLitElement {
+    @property({ type: String })
+    public value?: string;
+
+    @property({ type: String })
+    public placeholder?: string;
+
+    @property({ type: Boolean })
+    public readonly = false;
+}
+```
+
+#### List Component
+
+```typescript
+@customElement('key-value-tags-list')
+export class KeyValueTagsListElement extends UmbLitElement {
+    @property({ type: Array })
+    public items?: Array<KeyValueTagItem>;
+
+    @property({ type: Boolean })
+    public readonly = false;
 }
 ```
 
