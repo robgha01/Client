@@ -255,7 +255,7 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
                 border-color: var(--uui-color-primary);
             }
 
-            /* Draggable styles */
+            /* Draggable styles  */
             .draggable-mirror {
                 background: var(--uui-color-surface);
                 border: 1px solid var(--uui-color-border-emphasis);
