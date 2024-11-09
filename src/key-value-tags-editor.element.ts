@@ -81,8 +81,9 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
                                 compact
                                 look="secondary"
                                 label="Remove"
-                                @click=${() => this.#onRemove(index)}>
-                                <uui-icon name="remove"></uui-icon>
+                                @click=${() => this.#onRemove(index)}
+                                style="min-height: 40px;">
+                                <uui-icon name="icon-trash"></uui-icon>
                             </uui-button>
                         ` : ''}
                     </div>
