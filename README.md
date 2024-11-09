@@ -17,19 +17,14 @@ A custom property editor for Umbraco 14 that allows editors to manage key-value 
 
 ## Project Structure
 
-- `/src`: Contains the source code for the Key Value Tags Editor.
-  - `/DataEditors`: Contains the data editor components.
-    - `KeyValueTagsDataEditor.cs`: The main data editor class that registers the property editor with Umbraco.
-  - `/ValueConverters`: Contains the value converters.
-    - `KeyValueTagsValueConverter.cs`: Converts the stored JSON data to strongly typed objects.
-    - `KeyValueTagItem.cs`: Model class representing each item in the editor.
-- `/App_Plugins`: Contains the Umbraco App Plugins.
-  - `/KeyValueTags`: The property editor's front-end files.
-    - `/src`: TypeScript source files.
-      - `key-value-tags-editor.element.ts`: Main web component for the editor UI.
-      - `key-value-tags-input.element.ts`: Input component for the editor.
-      - `key-value-tags-list.element.ts`: List component for the editor.
-    - `key-value-tags-editor.html`: HTML template file.
+- `/src`: Contains the source code for the editors.
+  - `key-value-list-editor.element.ts`: Editor for managing key-value pairs with default selection
+  - `key-value-tags-editor.element.ts`: Editor for managing key-value pairs with tags
+  - `my-dropdown-editor.element.ts`: Custom dropdown editor with single/multiple selection
+- `/wwwroot/App_Plugins/Client`: Contains the compiled editor files.
+  - `client.js`: Dropdown editor
+  - `keyvaluelist.js`: Key value list editor
+  - `keyvaluetags.js`: Key value tags editor
 
 ## Components
 
