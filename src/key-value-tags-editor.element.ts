@@ -80,6 +80,7 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
                             <uui-button
                                 compact
                                 look="secondary"
+                                color="danger"
                                 label="Remove"
                                 @click=${() => this.#onRemove(index)}
                                 style="min-height: 40px;">
@@ -90,13 +91,15 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
                 `)}
 
                 ${!this.readonly ? html`
-                    <uui-button
-                        look="primary"
-                        label="Add item"
-                        @click=${this.#onAdd}>
-                        <uui-icon name="add"></uui-icon>
-                        Add item
-                    </uui-button>
+                    <div class="add-item-container">
+                        <uui-button
+                            look="primary"
+                            label="Add item"
+                            @click=${this.#onAdd}>
+                            <uui-icon name="add"></uui-icon>
+                            Add item
+                        </uui-button>
+                    </div>
                 ` : ''}
             </div>
         `;
@@ -115,6 +118,48 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
                 grid-template-columns: 200px 1fr auto;
                 gap: var(--uui-size-space-3);
                 align-items: start;
+            }
+
+            /* Common button styles - matching input height */
+            .key-value-tags uui-button {
+                height: var(--uui-button-height);
+                border: 1px solid var(--uui-color-border);
+                border-radius: var(--uui-border-radius);
+                transition: all 120ms ease;
+            }
+
+            /* Remove button */
+            uui-button[label="Remove"] {
+                width: var(--uui-button-height);
+            }
+
+            /* Add item button */
+            .add-item-container uui-button {
+                border-color: var(--uui-color-primary);
+            }
+
+            .add-item-container uui-button:hover {
+                background: var(--uui-color-primary-emphasis);
+                border-color: var(--uui-color-primary-emphasis);
+                color: var(--uui-color-surface);
+            }
+
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .key-value-tags__item {
+                    grid-template-columns: auto 1fr auto;
+                    gap: var(--uui-size-space-2);
+                }
+
+                uui-input {
+                    min-width: 150px;
+                    grid-column: 2 / -1;
+                }
+
+                .key-value-tags__item uui-button:not(.drag-handle) {
+                    grid-column: 2 / -1;
+                    width: auto;
+                }
             }
         `
     ];
