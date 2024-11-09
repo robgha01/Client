@@ -6,6 +6,7 @@ import type { UmbTagsInputElement } from '@umbraco-cms/backoffice/tags';
 import '@umbraco-cms/backoffice/tags';
 
 interface KeyValueTagItem {
+    title: string;
     key: string;
     tags: Array<string>;
 }
@@ -27,7 +28,7 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
     }
 
     #onAdd() {
-        this.value = [...(this.value ?? []), { key: '', tags: [] }];
+        this.value = [...(this.value ?? []), { title: '', key: '', tags: [] }];
         this.dispatchEvent(new UmbPropertyValueChangeEvent());
     }
 
@@ -55,19 +56,37 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
         this.dispatchEvent(new UmbPropertyValueChangeEvent());
     }
 
+    #onTitleChange(index: number, event: Event) {
+        const input = event.target as HTMLInputElement;
+        this.value = (this.value ?? []).map((item, i) => 
+            i === index ? { ...item, title: input.value } : item
+        );
+        this.dispatchEvent(new UmbPropertyValueChangeEvent());
+    }
+
     render() {
         return html`
             <div class="key-value-tags">
                 ${(this.value ?? []).map((item, index) => html`
                     <div class="key-value-tags__item">
                         <div class="key-value-tags__item-header">
-                            <uui-input
-                                .value=${item.key}
-                                placeholder="Enter key"
-                                ?readonly=${this.readonly}
-                                @change=${(e: Event) => this.#onKeyChange(index, e)}
-                                style="min-height: 40px; padding: var(--uui-tag-padding, var(--uui-size-space-1, 3px) calc(var(--uui-size-space-1, 3px) + 0.5em)); padding-left: 0;">
-                            </uui-input>
+                            <div class="key-value-tags__item-inputs">
+                                <uui-input
+                                    .value=${item.title}
+                                    placeholder="Enter title"
+                                    ?readonly=${this.readonly}
+                                    @change=${(e: Event) => this.#onTitleChange(index, e)}
+                                    style="min-height: 40px; padding: var(--uui-tag-padding, var(--uui-size-space-1, 3px) calc(var(--uui-size-space-1, 3px) + 0.5em)); padding-left: 0;">
+                                </uui-input>
+
+                                <uui-input
+                                    .value=${item.key}
+                                    placeholder="Enter key"
+                                    ?readonly=${this.readonly}
+                                    @change=${(e: Event) => this.#onKeyChange(index, e)}
+                                    style="min-height: 40px; padding: var(--uui-tag-padding, var(--uui-size-space-1, 3px) calc(var(--uui-size-space-1, 3px) + 0.5em)); padding-left: 0;">
+                                </uui-input>
+                            </div>
 
                             ${!this.readonly ? html`
                                 <uui-button
@@ -76,21 +95,19 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
                                     color="danger"
                                     label="Remove"
                                     @click=${() => this.#onRemove(index)}
-                                    style="min-height: 40px;">
+                                    style="min-height: 40px; min-width: 55.0278px;">
                                     <uui-icon name="icon-trash"></uui-icon>
                                 </uui-button>
                             ` : ''}
                         </div>
                         
-                        <div class="key-value-tags__item-content">
-                            <umb-tags-input
-                                .value=${item.tags.join(',')}
-                                .items=${item.tags}
-                                .config=${this.config}
-                                ?readonly=${this.readonly}
-                                @change=${(e: CustomEvent) => this.#onTagsChange(index, e)}>
-                            </umb-tags-input>
-                        </div>
+                        <umb-tags-input
+                            .value=${item.tags.join(',')}
+                            .items=${item.tags}
+                            .config=${this.config}
+                            ?readonly=${this.readonly}
+                            @change=${(e: CustomEvent) => this.#onTagsChange(index, e)}>
+                        </umb-tags-input>
                     </div>
                 `)}
 
@@ -123,7 +140,7 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
                 padding: var(--uui-size-space-3);
                 display: flex;
                 flex-direction: column;
-                gap: var(--uui-size-space-2);
+                gap: var(--uui-size-space-3);
                 padding-left: 0;
             }
 
@@ -134,8 +151,9 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
                 align-items: center;
             }
 
-            .key-value-tags__item-content {
-/*                 padding-left: var(--uui-size-space-3); */
+            .key-value-tags__item-inputs {
+                display: flex;
+                gap: var(--uui-size-space-3);
                 border-left: 2px solid var(--uui-color-border);
             }
 
@@ -163,16 +181,15 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
                 color: var(--uui-color-surface);
             }
 
-            /* Responsive adjustments */
-            @media (max-width: 768px) {
-                .key-value-tags__item-header {
-                    grid-template-columns: 1fr auto;
-                    gap: var(--uui-size-space-2);
-                }
+            /* Make inputs equal width */
+            .key-value-tags__item-inputs uui-input {
+                flex: 1;
+            }
 
-                .key-value-tags__item-content {
-                    padding-left: var(--uui-size-space-2);
-                }
+            /* Tags input full width */
+            umb-tags-input {
+                width: 100%;
+                border-left: 2px solid var(--uui-color-border);
             }
         `
     ];
