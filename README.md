@@ -1,6 +1,6 @@
-# Key Value Tags Editor for Umbraco 13
+# Key Value Tags Editor for Umbraco 14
 
-A custom property editor for Umbraco 13 that allows editors to manage key-value pairs with associated tags. Each item consists of a title, key, and multiple tags, with drag-and-drop reordering capabilities.
+A custom property editor for Umbraco 14 that allows editors to manage key-value pairs with associated tags. Each item consists of a title, key, and multiple tags, with drag-and-drop reordering capabilities.
 
 ## Features
 
