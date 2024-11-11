@@ -30,39 +30,26 @@ A custom property editor for Umbraco 14 that allows editors to manage key-value 
 
 ### Backend Components
 
-#### Data Editor
+#### Composer
 
 ```csharp
-[DataEditor(
-    alias: "keyValueTags",
-    name: "Key Value Tags",
-    view: "/App_Plugins/KeyValueTags/key-value-tags-editor.html",
-    Group = Constants.PropertyEditors.Groups.Lists,
-    Icon = "icon-tags")]
-public class KeyValueTagsDataEditor : DataEditor
+public class CustomEditorsComposer : IComposer
 {
-    private readonly IIOHelper _ioHelper;
-    private readonly IEditorConfigurationParser _editorConfigurationParser;
-
-    public KeyValueTagsDataEditor(
-        IDataValueEditorFactory dataValueEditorFactory,
-        IIOHelper ioHelper,
-        IEditorConfigurationParser editorConfigurationParser)
-        : base(dataValueEditorFactory)
+    public void Compose(IUmbracoBuilder builder)
     {
-        _ioHelper = ioHelper;
-        _editorConfigurationParser = editorConfigurationParser;
+        builder.PropertyValueConverters().Append<KeyValueTagsValueConverter>();
+        builder.PropertyValueConverters().Append<KeyValueListValueConverter>();
     }
 }
 ```
 
-#### Value Converter
+#### Value Converters
 
 ```csharp
 public class KeyValueTagsValueConverter : PropertyValueConverterBase
 {
     public override bool IsConverter(IPublishedPropertyType propertyType)
-        => propertyType.EditorAlias.Equals("keyValueTags");
+        => propertyType.EditorAlias.Equals("My.PropertyEditorUi.KeyValueTags");
 
     public override Type GetPropertyValueType(IPublishedPropertyType propertyType)
         => typeof(IEnumerable<KeyValueTagItem>);
@@ -85,9 +72,36 @@ public class KeyValueTagsValueConverter : PropertyValueConverterBase
         }
     }
 }
+
+public class KeyValueListValueConverter : PropertyValueConverterBase
+{
+    public override bool IsConverter(IPublishedPropertyType propertyType)
+        => propertyType.EditorAlias.Equals("My.PropertyEditorUi.KeyValueList");
+
+    public override Type GetPropertyValueType(IPublishedPropertyType propertyType)
+        => typeof(IEnumerable<KeyValueItem>);
+
+    public override PropertyCacheLevel GetPropertyCacheLevel(IPublishedPropertyType propertyType)
+        => PropertyCacheLevel.Element;
+
+    public override object? ConvertSourceToIntermediate(IPublishedElement owner, IPublishedPropertyType propertyType, object? source, bool preview)
+    {
+        if (source == null) return null;
+        var sourceString = source.ToString();
+        if (string.IsNullOrWhiteSpace(sourceString)) return Enumerable.Empty<KeyValueItem>();
+        try
+        {
+            return JsonConvert.DeserializeObject<IEnumerable<KeyValueItem>>(sourceString);
+        }
+        catch (Exception ex)
+        {
+            return Enumerable.Empty<KeyValueItem>();
+        }
+    }
+}
 ```
 
-#### Model
+#### Models
 
 ```csharp
 public class KeyValueTagItem
@@ -95,6 +109,98 @@ public class KeyValueTagItem
     public string Title { get; set; } = string.Empty;
     public string Key { get; set; } = string.Empty;
     public IEnumerable<string> Tags { get; set; } = Enumerable.Empty<string>();
+}
+
+public class KeyValueItem
+{
+    public string Key { get; set; } = string.Empty;
+    public string Value { get; set; } = string.Empty;
+    public bool IsDefault { get; set; }
+}
+```
+
+#### Data Editors
+
+```csharp
+[DataEditor(
+    alias: "My.PropertyEditorUi.KeyValueTags",
+    type: EditorType.PropertyValue,
+    ValueEditorIsReusable = true)]
+public class KeyValueTagsDataEditor : DataEditor
+{
+    public KeyValueTagsDataEditor(IDataValueEditorFactory dataValueEditorFactory)
+        : base(dataValueEditorFactory)
+    {
+    }
+
+    protected override IDataValueEditor CreateValueEditor()
+        => DataValueEditorFactory.Create<KeyValueTagsDataValueEditor>(Attribute!);
+}
+
+public class KeyValueTagsDataValueEditor : DataValueEditor
+{
+    public KeyValueTagsDataValueEditor(
+        IShortStringHelper shortStringHelper,
+        IJsonSerializer jsonSerializer,
+        IIOHelper ioHelper,
+        DataEditorAttribute attribute)
+        : base(shortStringHelper, jsonSerializer, ioHelper, attribute)
+    {
+    }
+}
+
+[DataEditor(
+    alias: "My.PropertyEditorUi.KeyValueList",
+    type: EditorType.PropertyValue,
+    ValueEditorIsReusable = true)]
+public class KeyValueListDataEditor : DataEditor
+{
+    public KeyValueListDataEditor(IDataValueEditorFactory dataValueEditorFactory)
+        : base(dataValueEditorFactory)
+    {
+    }
+
+    protected override IDataValueEditor CreateValueEditor()
+        => DataValueEditorFactory.Create<KeyValueListDataValueEditor>(Attribute!);
+}
+
+public class KeyValueListDataValueEditor : DataValueEditor
+{
+    public KeyValueListDataValueEditor(
+        IShortStringHelper shortStringHelper,
+        IJsonSerializer jsonSerializer,
+        IIOHelper ioHelper,
+        DataEditorAttribute attribute)
+        : base(shortStringHelper, jsonSerializer, ioHelper, attribute)
+    {
+    }
+}
+
+[DataEditor(
+    alias: "My.PropertyEditorUi.Dropdown",
+    type: EditorType.PropertyValue,
+    ValueEditorIsReusable = true)]
+public class CustomDropdownDataEditor : DataEditor
+{
+    public CustomDropdownDataEditor(IDataValueEditorFactory dataValueEditorFactory)
+        : base(dataValueEditorFactory)
+    {
+    }
+
+    protected override IDataValueEditor CreateValueEditor()
+        => DataValueEditorFactory.Create<CustomDropdownDataValueEditor>(Attribute!);
+}
+
+public class CustomDropdownDataValueEditor : DataValueEditor
+{
+    public CustomDropdownDataValueEditor(
+        IShortStringHelper shortStringHelper,
+        IJsonSerializer jsonSerializer,
+        IIOHelper ioHelper,
+        DataEditorAttribute attribute)
+        : base(shortStringHelper, jsonSerializer, ioHelper, attribute)
+    {
+    }
 }
 ```
 
