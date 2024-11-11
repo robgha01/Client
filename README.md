@@ -206,7 +206,7 @@ public class CustomDropdownDataValueEditor : DataValueEditor
 
 ### Frontend Components
 
-#### Main Editor Component
+#### Key Value Tags Editor
 
 ```typescript
 @customElement('key-value-tags-editor')
@@ -217,44 +217,48 @@ export class KeyValueTagsEditorElement extends UmbLitElement implements UmbPrope
     @property({ type: Object })
     public config: any;
 
-    @state()
-    private _items: Array<KeyValueTagItem> = [];
+    interface KeyValueTagItem {
+        title: string;
+        key: string;
+        tags: Array<string>;
+    }
 }
 ```
 
-#### Input Component
+#### Key Value List Editor
 
 ```typescript
-@customElement('key-value-tags-input')
-export class KeyValueTagsInputElement extends UmbLitElement {
-    @property({ type: String })
-    public value?: string;
-
-    @property({ type: String })
-    public placeholder?: string;
-
-    @property({ type: Boolean })
-    public readonly = false;
-}
-```
-
-#### List Component
-
-```typescript
-@customElement('key-value-tags-list')
-export class KeyValueTagsListElement extends UmbLitElement {
+@customElement('key-value-list-editor')
+export class KeyValueListEditorElement extends UmbLitElement implements UmbPropertyEditorUiElement {
     @property({ type: Array })
-    public items?: Array<KeyValueTagItem>;
+    value: Array<KeyValueItem> = [];
 
-    @property({ type: Boolean })
-    public readonly = false;
+    interface KeyValueItem {
+        key: string;
+        value: string;
+        isDefault?: boolean;
+    }
+}
+```
+
+#### Custom Dropdown Editor
+```typescript
+@customElement('my-dropdown-editor')
+export class MyDropdownEditorElement extends UmbLitElement implements UmbPropertyEditorUiElement {
+    @property({ type: Array })
+    public value: Array<string> = [];
+
+    // Always returns array, even for single selection
+    // Single selection: ["selected-value"]
+    // Multiple selection: ["value1", "value2", "value3"]
 }
 ```
 
 ## Usage
 
-### Example Value Format
+### Example Value Formats
 
+#### Key Value Tags
 ```json
 [
     {
@@ -270,15 +274,48 @@ export class KeyValueTagsListElement extends UmbLitElement {
 ]
 ```
 
+#### Key Value List
+```json
+[
+    {
+        "key": "option1",
+        "value": "Option 1",
+        "isDefault": true
+    },
+    {
+        "key": "option2",
+        "value": "Option 2",
+        "isDefault": false
+    }
+]
+```
+
+#### Custom Dropdown
+```json
+// Single selection (still returns array)
+["selected-value"]
+
+// Multiple selection
+["value1", "value2", "value3"]
+```
+
 ### Using in Templates
 
 ```csharp
 @using UmbracoProject1.ValueConverters
 
 @{
-    var keyValueTags = Model.Value<IEnumerable<KeyValueTagItem>>("propertyAlias");
+    // Key Value Tags
+    var keyValueTags = Model.Value<IEnumerable<KeyValueTagItem>>("keyValueTagsAlias");
+    
+    // Key Value List
+    var keyValueList = Model.Value<IEnumerable<KeyValueItem>>("keyValueListAlias");
+    
+    // Custom Dropdown (always returns IEnumerable<string>)
+    var dropdownValues = Model.Value<IEnumerable<string>>("dropdownAlias");
 }
 
+// Example: Key Value Tags
 @foreach (var item in keyValueTags)
 {
     <h3>@item.Title</h3>
@@ -290,6 +327,23 @@ export class KeyValueTagsListElement extends UmbLitElement {
         }
     </ul>
 }
+
+// Example: Key Value List
+@foreach (var item in keyValueList)
+{
+    <div class="@(item.IsDefault ? "default" : "")">
+        <span>@item.Value</span>
+        <code>@item.Key</code>
+    </div>
+}
+
+// Example: Custom Dropdown
+<ul>
+    @foreach (var value in dropdownValues)
+    {
+        <li>@value</li>
+    }
+</ul>
 ```
 
 ## Configuration
