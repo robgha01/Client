@@ -97,6 +97,19 @@
                     ]
                 }
             }
+        },
+        {
+            "type": "propertyEditorUi",
+            "alias": "My.PropertyEditorUi.ToggleTextList",
+            "name": "Toggle Text List",
+            "element": "/App_Plugins/Client/toggletextlist.js",
+            "elementName": "toggle-text-list-editor",
+            "meta": {
+                "label": "Toggle Text List",
+                "icon": "icon-list",
+                "group": "common",
+                "propertyEditorSchemaAlias": "My.PropertyEditorUi.ToggleTextList"
+            }
         }
     ]
 } 

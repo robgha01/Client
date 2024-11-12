@@ -6,7 +6,8 @@ export default defineConfig({
             entry: {
                 client: "src/my-dropdown-editor.element.ts",
                 keyvaluelist: "src/key-value-list-editor.element.ts",
-                keyvaluetags: "src/key-value-tags-editor.element.ts"
+                keyvaluetags: "src/key-value-tags-editor.element.ts",
+                toggletextlist: "src/toggle-text-list-editor.element.ts"
             },
             formats: ["es"],
         },

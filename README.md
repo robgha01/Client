@@ -21,10 +21,12 @@ A custom property editor for Umbraco 14 that allows editors to manage key-value 
   - `key-value-list-editor.element.ts`: Editor for managing key-value pairs with default selection
   - `key-value-tags-editor.element.ts`: Editor for managing key-value pairs with tags
   - `my-dropdown-editor.element.ts`: Custom dropdown editor with single/multiple selection
+  - `toggle-text-list-editor.element.ts`: Editor for managing text items with toggle switches
 - `/wwwroot/App_Plugins/Client`: Contains the compiled editor files.
   - `client.js`: Dropdown editor
   - `keyvaluelist.js`: Key value list editor
   - `keyvaluetags.js`: Key value tags editor
+  - `toggletextlist.js`: Toggle text list editor
 
 ## Components
 
@@ -39,6 +41,7 @@ public class CustomEditorsComposer : IComposer
     {
         builder.PropertyValueConverters().Append<KeyValueTagsValueConverter>();
         builder.PropertyValueConverters().Append<KeyValueListValueConverter>();
+        builder.PropertyValueConverters().Append<ToggleTextListValueConverter>();
     }
 }
 ```
@@ -116,6 +119,12 @@ public class KeyValueItem
     public string Key { get; set; } = string.Empty;
     public string Value { get; set; } = string.Empty;
     public bool IsDefault { get; set; }
+}
+
+public class ToggleTextItem
+{
+    public string Text { get; set; } = string.Empty;
+    public bool IsEnabled { get; set; }
 }
 ```
 
@@ -202,6 +211,33 @@ public class CustomDropdownDataValueEditor : DataValueEditor
     {
     }
 }
+
+[DataEditor(
+    alias: "My.PropertyEditorUi.ToggleTextList",
+    type: EditorType.PropertyValue,
+    ValueEditorIsReusable = true)]
+public class ToggleTextListDataEditor : DataEditor
+{
+    public ToggleTextListDataEditor(IDataValueEditorFactory dataValueEditorFactory)
+        : base(dataValueEditorFactory)
+    {
+    }
+
+    protected override IDataValueEditor CreateValueEditor()
+        => DataValueEditorFactory.Create<ToggleTextListDataValueEditor>(Attribute!);
+}
+
+public class ToggleTextListDataValueEditor : DataValueEditor
+{
+    public ToggleTextListDataValueEditor(
+        IShortStringHelper shortStringHelper,
+        IJsonSerializer jsonSerializer,
+        IIOHelper ioHelper,
+        DataEditorAttribute attribute)
+        : base(shortStringHelper, jsonSerializer, ioHelper, attribute)
+    {
+    }
+}
 ```
 
 ### Frontend Components
@@ -254,6 +290,20 @@ export class MyDropdownEditorElement extends UmbLitElement implements UmbPropert
 }
 ```
 
+#### Toggle Text List Editor
+```typescript
+@customElement('toggle-text-list-editor')
+export class ToggleTextListEditorElement extends UmbLitElement implements UmbPropertyEditorUiElement {
+    @property({ type: Array })
+    public value?: Array<ToggleTextItem>;
+
+    interface ToggleTextItem {
+        text: string;
+        isEnabled: boolean;
+    }
+}
+```
+
 ## Usage
 
 ### Example Value Formats
@@ -299,6 +349,20 @@ export class MyDropdownEditorElement extends UmbLitElement implements UmbPropert
 ["value1", "value2", "value3"]
 ```
 
+#### Toggle Text List
+```json
+[
+    {
+        "text": "Some text here",
+        "isEnabled": true
+    },
+    {
+        "text": "Another text",
+        "isEnabled": false
+    }
+]
+```
+
 ### Using in Templates
 
 ```csharp
@@ -313,6 +377,9 @@ export class MyDropdownEditorElement extends UmbLitElement implements UmbPropert
     
     // Custom Dropdown (always returns IEnumerable<string>)
     var dropdownValues = Model.Value<IEnumerable<string>>("dropdownAlias");
+    
+    // Toggle Text List
+    var toggleTextList = Model.Value<IEnumerable<ToggleTextItem>>("toggleTextListAlias");
 }
 
 // Example: Key Value Tags
@@ -344,6 +411,15 @@ export class MyDropdownEditorElement extends UmbLitElement implements UmbPropert
         <li>@value</li>
     }
 </ul>
+
+// Example: Toggle Text List
+@foreach (var item in toggleTextList)
+{
+    <div class="@(item.IsEnabled ? "enabled" : "disabled")">
+        <p>@item.Text</p>
+        <span>Status: @(item.IsEnabled ? "Enabled" : "Disabled")</span>
+    </div>
+}
 ```
 
 ## Configuration
