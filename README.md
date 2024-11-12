@@ -214,7 +214,6 @@ public class CustomDropdownDataValueEditor : DataValueEditor
 
 [DataEditor(
     alias: "My.PropertyEditorUi.ToggleTextList",
-    type: EditorType.PropertyValue,
     ValueEditorIsReusable = true)]
 public class ToggleTextListDataEditor : DataEditor
 {
