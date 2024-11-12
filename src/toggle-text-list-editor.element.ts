@@ -77,27 +77,29 @@ export class ToggleTextListEditorElement extends UmbLitElement implements UmbPro
 
     render() {
         return html`
-            <div class="flex flex-col">
-                <div class="items-container">
-                    ${repeat(
-                        this._items,
-                        (item) => ToggleTextListEditorElement.generateUniqueId(item),
-                        (item, index) => {
-                            const itemId = ToggleTextListEditorElement.generateUniqueId(item);
-                            return html`
-                                <div 
-                                    class="item"
-                                    id="${itemId}"
-                                    data-item-id="${itemId}"
-                                    ?disabled=${this.readonly}>
-                                    <uui-button 
-                                        class="drag-handle"
-                                        label="Drag to reorder"
-                                        tabindex="-1"
-                                        compact>
-                                        <uui-icon name="icon-navigation"></uui-icon>
-                                    </uui-button>
+            <div class="items-container">
+                ${repeat(
+                    this._items,
+                    (item) => ToggleTextListEditorElement.generateUniqueId(item),
+                    (item, index) => {
+                        const itemId = ToggleTextListEditorElement.generateUniqueId(item);
+                        return html`
+                            <div 
+                                class="item"
+                                id="${itemId}"
+                                data-item-id="${itemId}"
+                                ?disabled=${this.readonly}>
+                                
+                                <uui-button 
+                                    class="drag-handle"
+                                    label="Drag to reorder"
+                                    tabindex="-1"
+                                    style="min-height: 40px; min-width: 40px;"
+                                    compact>
+                                    <uui-icon name="icon-navigation"></uui-icon>
+                                </uui-button>
 
+                                <div class="item-content">
                                     <uui-input
                                         .value=${item.text}
                                         placeholder="Enter text"
@@ -111,29 +113,36 @@ export class ToggleTextListEditorElement extends UmbLitElement implements UmbPro
                                         ?disabled=${this.readonly}
                                         @change=${() => this.#toggleEnabled(index)}>
                                     </uui-toggle>
-
-                                    ${!this.readonly ? html`
-                                        <uui-button
-                                            label="Remove"
-                                            color="danger"
-                                            @click=${() => this.#removeItem(index)}>
-                                            <uui-icon name="icon-trash"></uui-icon>
-                                        </uui-button>
-                                    ` : ''}
                                 </div>
-                            `;
-                        }
-                    )}
-                </div>
+
+                                ${!this.readonly ? html`
+                                    <uui-button
+                                        compact
+                                        look="secondary"
+                                        color="danger"
+                                        label="Remove"
+                                        @click=${() => this.#removeItem(index)}>
+                                        <uui-icon name="icon-trash"></uui-icon>
+                                    </uui-button>
+                                ` : ''}
+                            </div>
+                        `;
+                    }
+                )}
 
                 ${!this.readonly ? html`
-                    <div class="add-item-container">
-                        <uui-button
-                            label="Add item"
-                            look="primary"
-                            @click=${this.#addItem}>
-                            Add Item
-                        </uui-button>
+                    <div class="item">
+                        <div></div>
+                        <div class="add-item-container">
+                            <uui-button
+                                look="primary"
+                                label="Add item"
+                                @click=${this.#addItem}>
+                                <uui-icon name="add"></uui-icon>
+                                Add item
+                            </uui-button>
+                        </div>
+                        <div></div>
                     </div>
                 ` : ''}
             </div>
@@ -193,19 +202,89 @@ export class ToggleTextListEditorElement extends UmbLitElement implements UmbPro
     }
 
     static styles = css`
-        .item {
+        .items-container {
             display: flex;
+            flex-direction: column;
             gap: var(--uui-size-space-2);
+        }
+
+        .item {
+            display: grid;
+            grid-template-columns: 40px 1fr 55.0278px;
+            gap: var(--uui-size-space-3);
+            background: var(--uui-color-surface);
+            border-radius: var(--uui-border-radius);
+            padding: var(--uui-size-space-3) 0;
+        }
+
+        .item-content {
+            display: flex;
+            gap: var(--uui-size-space-3);
             align-items: center;
-            padding: var(--uui-size-space-2);
+            grid-column: 2;
         }
-        
-        .add-button {
-            padding: var(--uui-size-space-2);
-        }
-        
+
         uui-input {
             flex: 1;
+            min-height: 40px;
+        }
+
+        /* Drag handle - first column */
+        .drag-handle {
+            grid-column: 1;
+            cursor: move;
+            color: var(--uui-color-text-alt);
+            min-width: 40px;
+            min-height: 40px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            align-self: start;
+        }
+
+        /* Remove button - last column */
+        uui-button[label="Remove"] {
+            grid-column: 3;
+            width: 55.0278px;
+            height: 40px;
+            min-height: 40px;
+            align-self: start;
+        }
+
+        /* Common button styles */
+        .items-container uui-button {
+            height: var(--uui-button-height);
+            border: 1px solid var(--uui-color-border);
+            border-radius: var(--uui-border-radius);
+            transition: all 120ms ease;
+        }
+
+        /* Add item button */
+        .add-item-container {
+            grid-column: 2;
+            display: flex;
+            align-items: center;
+        }
+
+        .add-item-container uui-button {
+            border-color: var(--uui-color-primary);
+        }
+
+        /* Draggable styles */
+        .draggable-mirror {
+            background: var(--uui-color-surface);
+            border: 1px solid var(--uui-color-border-emphasis);
+            border-radius: var(--uui-border-radius);
+            padding: var(--uui-size-space-4);
+            box-shadow: var(--uui-shadow-depth-3);
+            opacity: 0.9;
+        }
+
+        .draggable-source--is-dragging {
+            opacity: 0.3;
+            border: 1px dashed var(--uui-color-border);
         }
     `;
 }
