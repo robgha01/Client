@@ -102,6 +102,33 @@ public class KeyValueListValueConverter : PropertyValueConverterBase
         }
     }
 }
+
+public class ToggleTextListValueConverter : PropertyValueConverterBase
+{
+    public override bool IsConverter(IPublishedPropertyType propertyType)
+        => propertyType.EditorAlias.Equals("My.PropertyEditorUi.ToggleTextList");
+
+    public override Type GetPropertyValueType(IPublishedPropertyType propertyType)
+        => typeof(IEnumerable<ToggleTextItem>);
+
+    public override PropertyCacheLevel GetPropertyCacheLevel(IPublishedPropertyType propertyType)
+        => PropertyCacheLevel.Element;
+
+    public override object? ConvertSourceToIntermediate(IPublishedElement owner, IPublishedPropertyType propertyType, object? source, bool preview)
+    {
+        if (source == null) return null;
+        var sourceString = source.ToString();
+        if (string.IsNullOrWhiteSpace(sourceString)) return Enumerable.Empty<ToggleTextItem>();
+        try
+        {
+            return JsonConvert.DeserializeObject<IEnumerable<ToggleTextItem>>(sourceString);
+        }
+        catch (Exception ex)
+        {
+            return Enumerable.Empty<ToggleTextItem>();
+        }
+    }
+}
 ```
 
 #### Models
